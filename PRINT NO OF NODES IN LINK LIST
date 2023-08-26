@@ -1,43 +1,68 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-// Structure for a Node
-struct Node {
-    int data;
-    struct Node* next;
-};
+#define MAX_SIZE 100
 
-// Function to create a new Node
-struct Node* createNode(int data) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
-}
-
-// Function to count the number of nodes in the linked list
-int countNodes(struct Node* head) {
-    int count = 0;
-    struct Node* current = head;
-    while (current != NULL) {
-        count++;
-        current = current->next;
-    }
-    return count;
-}
+int list[MAX_SIZE];
+int size = 0;
 
 int main() {
-    // Create a linked list
-    struct Node* head = createNode(1);
-    head->next = createNode(2);
-    head->next->next = createNode(3);
-    head->next->next->next = createNode(4);
-    head->next->next->next->next = createNode(5);
+    int choice, data, key, i;
 
-    // Count the number of nodes
-    int count = countNodes(head);
+    while (1) {
+        printf("\nLinked List Operations:\n");
+        printf("1. Insert\n");
+        printf("2. Delete\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
 
-    printf("Number of nodes in the linked list: %d\n", count);
-
-    return 0;
+        switch (choice) {
+            case 1:
+                if (size == MAX_SIZE) {
+                    printf("List is full\n");
+                    break;
+                }
+                printf("Enter the data to insert: ");
+                scanf("%d", &data);
+                list[size] = data;
+                size++;
+                break;
+            case 2:
+                if (size == 0) {
+                    printf("List is empty\n");
+                    break;
+                }
+                printf("Enter the data to delete: ");
+                scanf("%d", &key);
+                for (i = 0; i < size; i++) {
+                    if (list[i] == key) {
+                        for (; i < size - 1; i++) {
+                            list[i] = list[i + 1];
+                        }
+                        size--;
+                        break;
+                    }
+                }
+                if (i == size) {
+                    printf("Element not found\n");
+                }
+                break;
+            case 3:
+                if (size == 0) {
+                    printf("List is empty\n");
+                    break;
+                }
+                printf("List elements: ");
+                for (i = 0; i < size; i++) {
+                    printf("%d ", list[i]);
+                }
+                printf("\n");
+                break;
+            case 4:
+                return 0;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
 }
