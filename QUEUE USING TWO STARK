@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a Stack Node
+struct StackNode {
+    int data;
+    struct StackNode* next;
+};
+
+// Structure for a Stack
+struct Stack {
+    struct StackNode* top;
+};
+
+// Create a new StackNode
+struct StackNode* createStackNode(int data) {
+    struct StackNode* newNode = (struct StackNode*)malloc(sizeof(struct StackNode));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Initialize a new Stack
+struct Stack* createStack() {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    stack->top = NULL;
+    return stack;
+}
+
+// Push an element onto the stack
+void push(struct Stack* stack, int data) {
+    struct StackNode* newNode = createStackNode(data);
+    newNode->next = stack->top;
+    stack->top = newNode;
+}
+
+// Pop an element from the stack
+int pop(struct Stack* stack) {
+    if (stack->top == NULL) {
+        printf("Stack is empty.\n");
+        return -1; // You can choose a different value to represent an empty stack
+    }
+
+    int data = stack->top->data;
+    struct StackNode* temp = stack->top;
+    stack->top = stack->top->next;
+    free(temp);
+
+    return data;
+}
+
+// Structure for a Queue using two stacks
+struct Queue {
+    struct Stack* stack1; // For enqueue operation
+    struct Stack* stack2; // For dequeue operation
+};
+
+// Initialize a new queue
+struct Queue* createQueue() {
+    struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+    queue->stack1 = createStack();
+    queue->stack2 = createStack();
+    return queue;
+}
+
+// Enqueue an element into the queue
+void enqueue(struct Queue* queue, int data) {
+    // Push all elements from stack2 to stack1
+    while (queue->stack2->top != NULL) {
+        push(queue->stack1, pop(queue->stack2));
+    }
+
+    // Push the new element onto stack1
+    push(queue->stack1, data);
+}
+
+// Dequeue an element from the queue
+int dequeue(struct Queue* queue) {
+    if (queue->stack1->top == NULL && queue->stack2->top == NULL) {
+        printf("Queue is empty.\n");
+        return -1; // You can choose a different value to represent an empty queue
+    }
+
+    // Push all elements from stack1 to stack2
+    while (queue->stack1->top != NULL) {
+        push(queue->stack2, pop(queue->stack1));
+    }
+
+    // Pop and return the front element from stack2
+    return pop(queue->stack2);
+}
+
+int main() {
+    struct Queue* queue = createQueue();
+
+    enqueue(queue, 1);
+    enqueue(queue, 2);
+    enqueue(queue, 3);
+
+    printf("Dequeued: %d\n", dequeue(queue));
+    printf("Dequeued: %d\n", dequeue(queue));
+    printf("Dequeued: %d\n", dequeue(queue));
+    printf("Dequeued: %d\n", dequeue(queue)); // Queue is empty now
+
+    return 0;
+}
