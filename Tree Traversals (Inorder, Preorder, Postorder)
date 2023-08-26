@@ -1,0 +1,76 @@
+#include <stdio.h>
+#define MAX_SIZE 100
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+int stack[MAX_SIZE];
+int top = -1;
+int main() {
+    struct Node* root = (struct Node*)malloc(sizeof(struct Node));
+    root->data = 1;
+    root->left = (struct Node*)malloc(sizeof(struct Node));
+    root->left->data = 2;
+    root->left->left = NULL;
+    root->left->right = NULL;
+    root->right = (struct Node*)malloc(sizeof(struct Node));
+    root->right->data = 3;
+    root->right->left = (struct Node*)malloc(sizeof(struct Node));
+    root->right->left->data = 4;
+    root->right->left->left = NULL;
+    root->right->left->right = NULL;
+    root->right->right = (struct Node*)malloc(sizeof(struct Node));
+    root->right->right->data = 5;
+    root->right->right->left = NULL;
+    root->right->right->right = NULL;
+    printf("Inorder traversal: ");
+    struct Node* current = root;
+    while (current != NULL || top != -1) {
+        while (current != NULL) {
+            stack[++top] = (int)current;
+            current = current->left;
+        }
+        current = (struct Node*)stack[top--];
+        printf("%d ", current->data);
+        current = current->right;
+    }
+    printf("\n");
+    printf("Preorder traversal: ");
+    top = -1;
+    stack[++top] = (int)root;
+    while (top != -1) {
+        struct Node* current = (struct Node*)stack[top--];
+        printf("%d ", current->data);
+        if (current->right != NULL) {
+            stack[++top] = (int)current->right;
+        }
+        if (current->left != NULL) {
+            stack[++top] = (int)current->left;
+        }
+    }
+    printf("\n");
+    printf("Postorder traversal: ");
+    top = -1;
+    struct Node* prev = NULL;
+    current = root;
+    do {
+        while (current != NULL) {
+            stack[++top] = (int)current;
+            current = current->left;
+        }
+        while (current == NULL && top != -1) {
+            struct Node* temp = (struct Node*)stack[top];
+            if (temp->right == NULL || temp->right == prev) {
+                printf("%d ", temp->data);
+                prev = temp;
+                top--;
+            } else {
+                current = temp->right;
+            }
+        }
+    } while (top != -1);
+    printf("\n");
+
+    return 0;
+}
